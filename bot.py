@@ -3,11 +3,10 @@ import re
 import yt_dlp
 from flask import Flask
 from threading import Thread
-import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
-BOT_TOKEN = "9284292038:AAEyC06_C2tp52pO2ElLwwcCEZOljjtXQeU"
+BOT_TOKEN = "9284292038:AAEyC06_C2tp52pO2ElLwwcCEZOljjtXQeU" 
 DOWNLOAD_DIR = "./downloads"
 
 if not os.path.exists(DOWNLOAD_DIR):
@@ -36,7 +35,7 @@ TEXTS = {
             "🔍 Yoki qo'shiq nomini yozing (Qidirish uchun)."
         ),
         "choose_lang": "🌐 Iltimos, tilni tanlang:",
-        "searching": "🔍 Qidirilmoqda...", # <-- ИЗМЕНЕНО
+        "searching": "🔍 Qidirilmoqda...",
         "search_results": "🔍 Qidiruv natijalari:\n\n",
         "checking": "⏳ Havola tekshirilmoqda...",
         "choose_format": "Formatni tanlang:",
@@ -71,7 +70,7 @@ TEXTS = {
             "🔍 Или напиши название песни (для поиска)."
         ),
         "choose_lang": "🌐 Пожалуйста, выберите язык:",
-        "searching": "🔍 Ищу...", # <-- ИЗМЕНЕНО
+        "searching": "🔍 Ищу...",
         "search_results": "🔍 Результаты поиска:\n\n",
         "checking": "⏳ Проверяю ссылку...",
         "choose_format": "Выбери формат:",
@@ -106,7 +105,7 @@ TEXTS = {
             "🔍 Or type a song name (to search)."
         ),
         "choose_lang": "🌐 Please choose a language:",
-        "searching": "🔍 Searching...", # <-- ИЗМЕНЕНО
+        "searching": "🔍 Searching...",
         "search_results": "🔍 Search results:\n\n",
         "checking": "⏳ Checking link...",
         "choose_format": "Choose format:",
@@ -156,12 +155,17 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
-    # СЦЕНАРИЙ 1: Ссылка
     if url_match:
         url = url_match.group(1)
         status_msg = await update.message.reply_text(get_text(context, "checking"))
 
-        ydl_opts = {'quiet': True, 'extract_flat': True, 'cookiefile': 'cookies.txt'}
+        # ДОБАВЛЕНО: 'extractor_args' чтобы обойти блокировку YouTube
+        ydl_opts = {
+            'quiet': True, 
+            'extract_flat': True, 
+            'cookiefile': 'cookies.txt',
+            'extractor_args': {'youtube': {'player_client': ['android', 'ios']}}
+        }
         
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -192,11 +196,17 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await status_msg.edit_text(f"{get_text(context, 'error')}{str(e)}")
         return
 
-    # СЦЕНАРИЙ 2: Поиск
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
-    ydl_opts = {'format': 'bestaudio/best', 'quiet': True, 'extract_flat': True, 'noplaylist': True}
+    # ДОБАВЛЕНО: 'extractor_args' чтобы обойти блокировку YouTube
+    ydl_opts = {
+        'format': 'bestaudio/best', 
+        'quiet': True, 
+        'extract_flat': True, 
+        'noplaylist': True,
+        'extractor_args': {'youtube': {'player_client': ['android', 'ios']}}
+    }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -260,16 +270,17 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     status_msg = await query.message.reply_text(get_text(context, "downloading"))
 
+    # ДОБАВЛЕНО: 'extractor_args' чтобы обойти блокировку YouTube
     ydl_opts = {
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
-        'ffmpeg_location': '/usr/bin/ffmpeg',
+        'ffmpeg_location': '/usr/bin/ffmpeg', # Серверный путь
         'noplaylist': True,
         'cookiefile': 'cookies.txt',
         'merge_output_format': 'mp4',
-        # НОВЫЕ НАСТРОЙКИ ДЛЯ СТАБИЛЬНОСТИ:
-        'retries': 10,            # Делаем 10 попыток при обрыве связи
-        'fragment_retries': 10,   # Повторяем скачивание кусочков
-        'socket_timeout': 30,     # Ждем ответа от сервера до 30 секунд
+        'retries': 10,
+        'fragment_retries': 10,
+        'socket_timeout': 30,
+        'extractor_args': {'youtube': {'player_client': ['android', 'ios']}}
     }
 
     if is_audio:
@@ -284,7 +295,6 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         })
     elif is_video:
         ydl_opts.update({
-            # ИЗМЕНЕНИЕ: Теперь качаем только до 720p (быстрее и меньше размер)
             'format': 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best[height<=720]',
         })
 
@@ -338,7 +348,7 @@ def main():
 
     print("Бот запущен...")
     
-    # --- Крошечный веб-сервер для Render ---
+    # Крошечный веб-сервер для Render
     web_app = Flask(__name__)
 
     @web_app.route('/')
@@ -350,8 +360,6 @@ def main():
         web_app.run(host='0.0.0.0', port=port)
 
     Thread(target=run_web).start()
-    # ---------------------------------------
-
     app.run_polling()
 
 if __name__ == "__main__":
