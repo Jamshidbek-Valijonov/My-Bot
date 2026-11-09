@@ -259,7 +259,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     ydl_opts = {
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
-        'ffmpeg_location': r'C:\Users\user\Desktop\FFmpeg',
+        'ffmpeg_location': '/usr/bin/ffmpeg',
         'noplaylist': True,
         'cookiefile': 'cookies.txt',
         'merge_output_format': 'mp4',
