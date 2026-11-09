@@ -1,6 +1,9 @@
 import os
 import re
 import yt_dlp
+from flask import Flask
+from threading import Thread
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
@@ -334,6 +337,21 @@ def main():
     app.add_handler(CallbackQueryHandler(button_callback))
 
     print("Бот запущен...")
+    
+    # --- Крошечный веб-сервер для Render ---
+    web_app = Flask(__name__)
+
+    @web_app.route('/')
+    def health_check():
+        return "Bot is running!"
+
+    def run_web():
+        port = int(os.environ.get("PORT", 10000))
+        web_app.run(host='0.0.0.0', port=port)
+
+    Thread(target=run_web).start()
+    # ---------------------------------------
+
     app.run_polling()
 
 if __name__ == "__main__":
