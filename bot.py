@@ -6,7 +6,7 @@ from threading import Thread
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
-BOT_TOKEN = "9284292038:AAEyC06_C2tp52pO2ElLwwcCEZOljjtXQeU" 
+BOT_TOKEN = "9284292038:AAEyC06_C2tp52pO2ElLwwcCEZOljjtXQeU"
 DOWNLOAD_DIR = "./downloads"
 
 if not os.path.exists(DOWNLOAD_DIR):
@@ -155,16 +155,18 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
+    # ОБХОД БЛОКИРОВКИ YOUTUBE
+    extractor_opts = {'youtube': {'player_client': ['android', 'ios', 'android_vr', 'web_safari']}}
+
     if url_match:
         url = url_match.group(1)
         status_msg = await update.message.reply_text(get_text(context, "checking"))
 
-        # ДОБАВЛЕНО: 'extractor_args' чтобы обойти блокировку YouTube
         ydl_opts = {
             'quiet': True, 
             'extract_flat': True, 
             'cookiefile': 'cookies.txt',
-            'extractor_args': {'youtube': {'player_client': ['android', 'ios']}}
+            'extractor_args': extractor_opts
         }
         
         try:
@@ -199,13 +201,12 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
-    # ДОБАВЛЕНО: 'extractor_args' чтобы обойти блокировку YouTube
     ydl_opts = {
         'format': 'bestaudio/best', 
         'quiet': True, 
         'extract_flat': True, 
         'noplaylist': True,
-        'extractor_args': {'youtube': {'player_client': ['android', 'ios']}}
+        'extractor_args': extractor_opts
     }
 
     try:
@@ -270,17 +271,16 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     status_msg = await query.message.reply_text(get_text(context, "downloading"))
 
-    # ДОБАВЛЕНО: 'extractor_args' чтобы обойти блокировку YouTube
     ydl_opts = {
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
-        'ffmpeg_location': '/usr/bin/ffmpeg', # Серверный путь
+        'ffmpeg_location': '/usr/bin/ffmpeg',
         'noplaylist': True,
         'cookiefile': 'cookies.txt',
         'merge_output_format': 'mp4',
         'retries': 10,
         'fragment_retries': 10,
         'socket_timeout': 30,
-        'extractor_args': {'youtube': {'player_client': ['android', 'ios']}}
+        'extractor_args': {'youtube': {'player_client': ['android', 'ios', 'android_vr', 'web_safari']}}
     }
 
     if is_audio:
