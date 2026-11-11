@@ -18,12 +18,6 @@ TEXTS = {
             "🔥 <b>Assalomu alaykum, jigarim!</b> 👋\n\n"
             "Men sizga turli platformalardan media yuklab olishda yordam beruvchi botman.\n\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "📥 <b>VIDEO YUKLASH</b>\n"
-            "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "• YouTube (video + shorts)\n"
-            "• Instagram (Reels, Post)\n"
-            "• TikTok (suv belgisisiz)\n\n"
-            "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🎵 <b>MUSIQA TOPISH</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "• Qo'shiq nomi orqali\n"
@@ -31,34 +25,25 @@ TEXTS = {
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🚀 <b>QANDAY ISHLATILADI?</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "🔗 Havolani yuboring (Video/Audio tanlash uchun).\n"
+            "🔗 Havolani yuboring (Audio yuklash uchun).\n"
             "🔍 Yoki qo'shiq nomini yozing (Qidirish uchun)."
         ),
         "choose_lang": "🌐 Iltimos, tilni tanlang:",
         "searching": "🔍 Qidirilmoqda...",
         "search_results": "🔍 Qidiruv natijalari:\n\n",
         "checking": "⏳ Havola tekshirilmoqda...",
-        "choose_format": "Formatni tanlang:",
+        "choose_format": "Yuklab olish uchun tugmani bosing:",
         "downloading": "⏳ Yuklanmoqda va tayyorlanmoqda...",
         "sending_audio": "📤 Audio yuborilmoqda...",
-        "sending_video": "📤 Video yuborilmoqda...",
         "error": "❌ Xatolik: ",
-        "too_big": "❌ Video juda katta. Telegram limiti 50MB.",
-        "btn_video": "📥 Video",
-        "btn_audio": "🎧 Audio",
-        "btn_dl_video": "📥 Videoni yuklash",
+        "too_big": "❌ Fayl juda katta. Telegram limiti 50MB.",
+        "btn_audio": "🎧 Audio yuklash",
         "error_url": "❌ Xatolik: URL topilmadi"
     },
     "ru": {
         "welcome": (
             "🔥 <b>Привет, бро!</b> 👋\n\n"
-            "Я бот, который поможет скачать медиа с разных платформ.\n\n"
-            "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "📥 <b>СКАЧИВАНИЕ ВИДЕО</b>\n"
-            "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "• YouTube (видео + shorts)\n"
-            "• Instagram (Reels, Посты)\n"
-            "• TikTok (без водяных знаков)\n\n"
+            "Я бот, который поможет скачать музыку с YouTube и SoundCloud.\n\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🎵 <b>ПОИСК МУЗЫКИ</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
@@ -67,34 +52,25 @@ TEXTS = {
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🚀 <b>КАК ЭТО РАБОТАЕТ?</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "🔗 Отправь ссылку (чтобы выбрать Видео/Аудио).\n"
+            "🔗 Отправь ссылку (чтобы скачать аудио).\n"
             "🔍 Или напиши название песни (для поиска)."
         ),
         "choose_lang": "🌐 Пожалуйста, выберите язык:",
         "searching": "🔍 Ищу...",
         "search_results": "🔍 Результаты поиска:\n\n",
         "checking": "⏳ Проверяю ссылку...",
-        "choose_format": "Выбери формат:",
+        "choose_format": "Нажми кнопку для скачивания:",
         "downloading": "⏳ Скачиваю и обрабатываю...",
         "sending_audio": "📤 Отправляю аудио...",
-        "sending_video": "📤 Отправляю видео...",
         "error": "❌ Ошибка: ",
-        "too_big": "❌ Видео слишком большое. Лимит Telegram 50MB.",
-        "btn_video": "📥 Видео",
-        "btn_audio": "🎧 Аудио",
-        "btn_dl_video": "📥 Скачать видео",
+        "too_big": "❌ Файл слишком большой. Лимит Telegram 50MB.",
+        "btn_audio": "🎧 Скачать аудио",
         "error_url": "❌ Ошибка: Ссылка не найдена"
     },
     "en": {
         "welcome": (
             "🔥 <b>Hello, bro!</b> 👋\n\n"
-            "I am a bot that helps you download media from various platforms.\n\n"
-            "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "📥 <b>VIDEO DOWNLOAD</b>\n"
-            "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "• YouTube (video + shorts)\n"
-            "• Instagram (Reels, Posts)\n"
-            "• TikTok (no watermark)\n\n"
+            "I am a bot that helps you download music from YouTube and SoundCloud.\n\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🎵 <b>MUSIC SEARCH</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
@@ -103,22 +79,19 @@ TEXTS = {
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🚀 <b>HOW TO USE?</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "🔗 Send a link (to choose Video/Audio).\n"
+            "🔗 Send a link (to download audio).\n"
             "🔍 Or type a song name (to search)."
         ),
         "choose_lang": "🌐 Please choose a language:",
         "searching": "🔍 Searching...",
         "search_results": "🔍 Search results:\n\n",
         "checking": "⏳ Checking link...",
-        "choose_format": "Choose format:",
+        "choose_format": "Click the button to download:",
         "downloading": "⏳ Downloading and processing...",
         "sending_audio": "📤 Sending audio...",
-        "sending_video": "📤 Sending video...",
         "error": "❌ Error: ",
-        "too_big": "❌ Video is too large. Telegram limit 50MB.",
-        "btn_video": "📥 Video",
-        "btn_audio": "🎧 Audio",
-        "btn_dl_video": "📥 Download video",
+        "too_big": "❌ File is too large. Telegram limit 50MB.",
+        "btn_audio": "🎧 Download audio",
         "error_url": "❌ Error: URL not found"
     }
 }
@@ -128,9 +101,7 @@ def get_text(context, key):
     return TEXTS.get(lang, TEXTS['uz']).get(key, "")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # ОЧИЩАЕМ ПАМЯТЬ, ЧТОБЫ ЯЗЫК СБРОСИЛСЯ НА УЗБЕКСКИЙ
     context.user_data.clear()
-
     keyboard = [
         [InlineKeyboardButton("🇺🇿 O'zbekcha", callback_data="lang_uz")],
         [InlineKeyboardButton("🇷🇺 Русский", callback_data="lang_ru")],
@@ -161,7 +132,6 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
-    # Настройки для YouTube (если вдруг прямая ссылка)
     extractor_opts = {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
 
     if url_match:
@@ -184,13 +154,8 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 thumbnail_url = info.get('thumbnail')
                 context.user_data['current_url'] = url
 
-                if "youtube.com" in url or "youtu.be" in url:
-                    keyboard = [[
-                        InlineKeyboardButton(get_text(context, "btn_video"), callback_data="download_video"),
-                        InlineKeyboardButton(get_text(context, "btn_audio"), callback_data="download_audio")
-                    ]]
-                else:
-                    keyboard = [[InlineKeyboardButton(get_text(context, "btn_dl_video"), callback_data="download_video")]]
+                # Оставляем ТОЛЬКО кнопку аудио
+                keyboard = [[InlineKeyboardButton(get_text(context, "btn_audio"), callback_data="download_audio")]]
 
                 reply_markup = InlineKeyboardMarkup(keyboard)
                 text = f"🎬 {title}\n\n{get_text(context, 'choose_format')}"
@@ -204,22 +169,21 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await status_msg.edit_text(f"{get_text(context, 'error')}{str(e)}")
         return
 
-    # СЦЕНАРИЙ 2: Поиск (ТЕПЕРЬ В SOUNDCLOUD)
+    # СЦЕНАРИЙ 2: Поиск (Ищем в YouTube, если не выйдет - в SoundCloud)
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
-    # Ищем в SoundCloud и указываем форматы, чтобы избежать ошибки 'float'
     ydl_opts = {
         'format': 'bestaudio/best', 
         'quiet': True, 
         'extract_flat': True, 
         'noplaylist': True,
-        'extractor_args': {'soundcloud': {'formats': ['http_mp3', 'hls_mp3']}} # ФИКС ОШИБКИ
+        'extractor_args': extractor_opts
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(f"scsearch5:{query}", download=False)
+            info = ydl.extract_info(f"ytsearch5:{query}", download=False) # Ищем в YouTube
             entries = [e for e in info['entries'] if e is not None]
             context.user_data['search_results'] = entries
 
@@ -258,21 +222,19 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     
     action = query.data
-    url, is_audio, is_video = None, False, False
+    url, is_audio = None, False
 
     if action.startswith("search_dl_"):
         index = int(action.split("_")[2])
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
-            search_query = entries[index].get('title')
-            url = f"scsearch1:{search_query}"
+            video_id = entries[index].get('id')
+            if video_id:
+                url = f"https://www.youtube.com/watch?v={video_id}"
         is_audio = True
     elif action == "download_audio":
         url = context.user_data.get('current_url')
         is_audio = True
-    elif action == "download_video":
-        url = context.user_data.get('current_url')
-        is_video = True
 
     if not url:
         await query.message.reply_text(get_text(context, "error_url"))
@@ -285,30 +247,22 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'ffmpeg_location': '/usr/bin/ffmpeg',
         'noplaylist': True,
         'cookiefile': os.path.abspath('youtube_cookies.txt'), 
-        'merge_output_format': 'mp4',
         'retries': 10,
         'fragment_retries': 10,
         'socket_timeout': 30,
-        # ОБЪЕДИНЯЕМ НАСТРОЙКИ ДЛЯ YOUTUBE И SOUNDCLOUD
-        'extractor_args': {
-            'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']},
-            'soundcloud': {'formats': ['http_mp3', 'hls_mp3']} 
-        }
+        # Убрали formats для SoundCloud, чтобы не было ошибки float
+        'extractor_args': {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}},
+        'format': 'bestaudio/best', # Принудительно качаем только аудио
     }
 
     if is_audio:
         ydl_opts.update({
-            'format': 'bestaudio/best',
             'writethumbnail': True,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }, {'key': 'EmbedThumbnail'}],
-        })
-    elif is_video:
-        ydl_opts.update({
-            'format': 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best[height<=720]',
         })
 
     try:
@@ -319,28 +273,14 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             filename = ydl.prepare_filename(info)
             base, _ = os.path.splitext(filename)
 
-            if is_audio:
-                final_file = base + ".mp3"
-                await status_msg.edit_text(get_text(context, "sending_audio"))
-                with open(final_file, 'rb') as f:
-                    await query.message.reply_audio(
-                        audio=f, 
-                        title=info.get('title', 'Unknown'), 
-                        performer=info.get('uploader', 'Unknown')
-                    )
-            elif is_video:
-                final_file = base + ".mp4"
-                if not os.path.exists(final_file): final_file = filename
-                
-                file_size = os.path.getsize(final_file) / (1024 * 1024)
-                if file_size > 50:
-                    await status_msg.edit_text(get_text(context, "too_big"))
-                    os.remove(final_file)
-                    return
-
-                await status_msg.edit_text(get_text(context, "sending_video"))
-                with open(final_file, 'rb') as f:
-                    await query.message.reply_video(video=f)
+            final_file = base + ".mp3"
+            await status_msg.edit_text(get_text(context, "sending_audio"))
+            with open(final_file, 'rb') as f:
+                await query.message.reply_audio(
+                    audio=f, 
+                    title=info.get('title', 'Unknown'), 
+                    performer=info.get('uploader', 'Unknown')
+                )
 
         if os.path.exists(final_file): os.remove(final_file)
         await status_msg.delete()
