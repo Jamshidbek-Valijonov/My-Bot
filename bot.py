@@ -47,7 +47,7 @@ TEXTS = {
         "btn_video": "📥 Video",
         "btn_audio": "🎧 Audio",
         "btn_dl_video": "📥 Videoni yuklash",
-        "error_url": "❌ Xatolik: URL topilmadi" # НОВОЕ
+        "error_url": "❌ Xatolik: URL topilmadi"
     },
     "ru": {
         "welcome": (
@@ -83,7 +83,7 @@ TEXTS = {
         "btn_video": "📥 Видео",
         "btn_audio": "🎧 Аудио",
         "btn_dl_video": "📥 Скачать видео",
-        "error_url": "❌ Ошибка: Ссылка не найдена" # НОВОЕ
+        "error_url": "❌ Ошибка: Ссылка не найдена"
     },
     "en": {
         "welcome": (
@@ -119,7 +119,7 @@ TEXTS = {
         "btn_video": "📥 Video",
         "btn_audio": "🎧 Audio",
         "btn_dl_video": "📥 Download video",
-        "error_url": "❌ Error: URL not found" # НОВОЕ
+        "error_url": "❌ Error: URL not found"
     }
 }
 
@@ -158,10 +158,8 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
-    # Обход блокировки YouTube (новый клиент tv)
     extractor_opts = {'youtube': {'player_client': ['tv', 'web_safari', 'android']}}
 
-    # СЦЕНАРИЙ 1: Ссылка
     if url_match:
         url = url_match.group(1)
         status_msg = await update.message.reply_text(get_text(context, "checking"))
@@ -202,7 +200,6 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await status_msg.edit_text(f"{get_text(context, 'error')}{str(e)}")
         return
 
-    # СЦЕНАРИЙ 2: Поиск
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
@@ -221,7 +218,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             context.user_data['search_results'] = entries
 
             keyboard, row = [], []
-            text = get_text(context, "search_results")
+            text = get_text(context, "search_results") # ТЕПЕРЬ НА РУССКОМ
             thumbnail_url = None
             
             for i, entry in enumerate(entries):
@@ -261,22 +258,10 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         index = int(action.split("_")[2])
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
-            search_query = entries[index].get('title')
-            # Повторный поиск для получения рабочей ссылки
-            ydl_opts = {
-                'format': 'bestaudio/best', 
-                'quiet': True, 
-                'noplaylist': True,
-                'extract_flat': False, 
-                'extractor_args': {'youtube': {'player_client': ['tv', 'web_safari', 'android']}}
-            }
-            try:
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(f"ytsearch1:{search_query}", download=False)
-                    if 'entries' in info and len(info['entries']) > 0:
-                        url = info['entries'][0]['webpage_url']
-            except:
-                pass
+            # БЕРЕМ ID И ДЕЛАЕМ ССЫЛКУ (РЕШЕНИЕ ПРОБЛЕМЫ URL TOPILMADI)
+            video_id = entries[index].get('id')
+            if video_id:
+                url = f"https://www.youtube.com/watch?v={video_id}"
         is_audio = True
     elif action == "download_audio":
         url = context.user_data.get('current_url')
@@ -286,15 +271,14 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         is_video = True
 
     if not url:
-        # ИСПОЛЬЗУЕМ НОВЫЙ ТЕКСТ ОШИБКИ
-        await query.message.reply_text(get_text(context, "error_url"))
+        await query.message.reply_text(get_text(context, "error_url")) # ТЕПЕРЬ НА РУССКОМ
         return
 
     status_msg = await query.message.reply_text(get_text(context, "downloading"))
 
     ydl_opts = {
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
-        'ffmpeg_location': '/usr/bin/ffmpeg', # Путь для Render
+        'ffmpeg_location': '/usr/bin/ffmpeg',
         'noplaylist': True,
         'cookiefile': 'cookies.txt',
         'merge_output_format': 'mp4',
@@ -369,7 +353,6 @@ def main():
 
     print("Бот запущен...")
     
-    # Веб-сервер для Render
     web_app = Flask(__name__)
 
     @web_app.route('/')
