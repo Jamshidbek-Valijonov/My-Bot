@@ -46,7 +46,8 @@ TEXTS = {
         "too_big": "❌ Video juda katta. Telegram limiti 50MB.",
         "btn_video": "📥 Video",
         "btn_audio": "🎧 Audio",
-        "btn_dl_video": "📥 Videoni yuklash"
+        "btn_dl_video": "📥 Videoni yuklash",
+        "error_url": "❌ Xatolik: URL topilmadi" # НОВОЕ
     },
     "ru": {
         "welcome": (
@@ -81,7 +82,8 @@ TEXTS = {
         "too_big": "❌ Видео слишком большое. Лимит Telegram 50MB.",
         "btn_video": "📥 Видео",
         "btn_audio": "🎧 Аудио",
-        "btn_dl_video": "📥 Скачать видео"
+        "btn_dl_video": "📥 Скачать видео",
+        "error_url": "❌ Ошибка: Ссылка не найдена" # НОВОЕ
     },
     "en": {
         "welcome": (
@@ -116,7 +118,8 @@ TEXTS = {
         "too_big": "❌ Video is too large. Telegram limit 50MB.",
         "btn_video": "📥 Video",
         "btn_audio": "🎧 Audio",
-        "btn_dl_video": "📥 Download video"
+        "btn_dl_video": "📥 Download video",
+        "error_url": "❌ Error: URL not found" # НОВОЕ
     }
 }
 
@@ -155,9 +158,10 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
-    # ОБХОД БЛОКИРОВКИ YOUTUBE
-    extractor_opts = {'youtube': {'player_client': ['android', 'ios', 'android_vr', 'web_safari']}}
+    # Обход блокировки YouTube (новый клиент tv)
+    extractor_opts = {'youtube': {'player_client': ['tv', 'web_safari', 'android']}}
 
+    # СЦЕНАРИЙ 1: Ссылка
     if url_match:
         url = url_match.group(1)
         status_msg = await update.message.reply_text(get_text(context, "checking"))
@@ -198,6 +202,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await status_msg.edit_text(f"{get_text(context, 'error')}{str(e)}")
         return
 
+    # СЦЕНАРИЙ 2: Поиск
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
@@ -256,7 +261,22 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         index = int(action.split("_")[2])
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
-            url = entries[index].get('url') or entries[index].get('webpage_url')
+            search_query = entries[index].get('title')
+            # Повторный поиск для получения рабочей ссылки
+            ydl_opts = {
+                'format': 'bestaudio/best', 
+                'quiet': True, 
+                'noplaylist': True,
+                'extract_flat': False, 
+                'extractor_args': {'youtube': {'player_client': ['tv', 'web_safari', 'android']}}
+            }
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(f"ytsearch1:{search_query}", download=False)
+                    if 'entries' in info and len(info['entries']) > 0:
+                        url = info['entries'][0]['webpage_url']
+            except:
+                pass
         is_audio = True
     elif action == "download_audio":
         url = context.user_data.get('current_url')
@@ -266,21 +286,22 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         is_video = True
 
     if not url:
-        await query.message.reply_text(f"{get_text(context, 'error')}URL topilmadi")
+        # ИСПОЛЬЗУЕМ НОВЫЙ ТЕКСТ ОШИБКИ
+        await query.message.reply_text(get_text(context, "error_url"))
         return
 
     status_msg = await query.message.reply_text(get_text(context, "downloading"))
 
     ydl_opts = {
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
-        'ffmpeg_location': '/usr/bin/ffmpeg',
+        'ffmpeg_location': '/usr/bin/ffmpeg', # Путь для Render
         'noplaylist': True,
         'cookiefile': 'cookies.txt',
         'merge_output_format': 'mp4',
         'retries': 10,
         'fragment_retries': 10,
         'socket_timeout': 30,
-        'extractor_args': {'youtube': {'player_client': ['android', 'ios', 'android_vr', 'web_safari']}}
+        'extractor_args': {'youtube': {'player_client': ['tv', 'web_safari', 'android']}}
     }
 
     if is_audio:
@@ -348,7 +369,7 @@ def main():
 
     print("Бот запущен...")
     
-    # Крошечный веб-сервер для Render
+    # Веб-сервер для Render
     web_app = Flask(__name__)
 
     @web_app.route('/')
