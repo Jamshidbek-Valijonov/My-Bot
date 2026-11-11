@@ -260,9 +260,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         index = int(action.split("_")[2])
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
-            video_id = entries[index].get('id')
-            if video_id:
-                url = f"https://www.youtube.com/watch?v={video_id}"
+            # Берем название и качаем сразу по нему
+            search_query = entries[index].get('title')
+            url = f"ytsearch1:{search_query}" # <--- МАГИЯ ЗДЕСЬ
         is_audio = True
     elif action == "download_audio":
         url = context.user_data.get('current_url')
@@ -286,7 +286,6 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'retries': 10,
         'fragment_retries': 10,
         'socket_timeout': 30,
-        # ИЗМЕНЕНО ЗДЕСЬ (3)
         'extractor_args': {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
     }
 
@@ -307,6 +306,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            # Если url начинается на ytsearch, yt-dlp сам найдет первое видео
             info = ydl.extract_info(url, download=True)
             if 'entries' in info: info = info['entries'][0]
 
