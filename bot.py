@@ -6,6 +6,7 @@ from threading import Thread
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
+# ВСТАВЬ СВОЙ ТОКЕН СЮДА
 BOT_TOKEN = "9284292038:AAEyC06_C2tp52pO2ElLwwcCEZOljjtXQeU"
 DOWNLOAD_DIR = "./downloads"
 
@@ -167,7 +168,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ydl_opts = {
             'quiet': True, 
             'extract_flat': True, 
-            'cookiefile': 'cookies.txt',
+            'cookiefile': os.path.abspath('youtube_cookies.txt'), # АБСОЛЮТНЫЙ ПУТЬ
             'extractor_args': extractor_opts
         }
         
@@ -218,7 +219,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             context.user_data['search_results'] = entries
 
             keyboard, row = [], []
-            text = get_text(context, "search_results") # ТЕПЕРЬ НА РУССКОМ
+            text = get_text(context, "search_results")
             thumbnail_url = None
             
             for i, entry in enumerate(entries):
@@ -258,7 +259,6 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         index = int(action.split("_")[2])
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
-            # БЕРЕМ ID И ДЕЛАЕМ ССЫЛКУ (РЕШЕНИЕ ПРОБЛЕМЫ URL TOPILMADI)
             video_id = entries[index].get('id')
             if video_id:
                 url = f"https://www.youtube.com/watch?v={video_id}"
@@ -271,7 +271,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         is_video = True
 
     if not url:
-        await query.message.reply_text(get_text(context, "error_url")) # ТЕПЕРЬ НА РУССКОМ
+        await query.message.reply_text(get_text(context, "error_url"))
         return
 
     status_msg = await query.message.reply_text(get_text(context, "downloading"))
@@ -280,7 +280,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
         'ffmpeg_location': '/usr/bin/ffmpeg',
         'noplaylist': True,
-        'cookiefile': 'cookies.txt',
+        'cookiefile': os.path.abspath('youtube_cookies.txt'), # АБСОЛЮТНЫЙ ПУТЬ
         'merge_output_format': 'mp4',
         'retries': 10,
         'fragment_retries': 10,
