@@ -6,7 +6,6 @@ from threading import Thread
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
-# ВСТАВЬ СВОЙ ТОКЕН СЮДА
 BOT_TOKEN = "9284292038:AAEyC06_C2tp52pO2ElLwwcCEZOljjtXQeU"
 DOWNLOAD_DIR = "./downloads"
 
@@ -129,6 +128,9 @@ def get_text(context, key):
     return TEXTS.get(lang, TEXTS['uz']).get(key, "")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # ОЧИЩАЕМ ПАМЯТЬ, ЧТОБЫ ЯЗЫК СБРОСИЛСЯ НА УЗБЕКСКИЙ
+    context.user_data.clear()
+
     keyboard = [
         [InlineKeyboardButton("🇺🇿 O'zbekcha", callback_data="lang_uz")],
         [InlineKeyboardButton("🇷🇺 Русский", callback_data="lang_ru")],
@@ -159,7 +161,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
-    # ИЗМЕНЕНО ЗДЕСЬ (1)
+    # НАСТРОЙКИ ДЛЯ ОБХОДА (если это YouTube, они не помешают)
     extractor_opts = {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
 
     if url_match:
@@ -169,6 +171,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ydl_opts = {
             'quiet': True, 
             'extract_flat': True, 
+            # Куки для YouTube больше не нужны для SoundCloud, но оставим на случай прямых ссылок
             'cookiefile': os.path.abspath('youtube_cookies.txt'), 
             'extractor_args': extractor_opts
         }
@@ -202,9 +205,11 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await status_msg.edit_text(f"{get_text(context, 'error')}{str(e)}")
         return
 
+    # СЦЕНАРИЙ 2: Поиск (ТЕПЕРЬ В SOUNDCLOUD)
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
+    # Используем scsearch5 для поиска в SoundCloud
     ydl_opts = {
         'format': 'bestaudio/best', 
         'quiet': True, 
@@ -215,7 +220,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(f"ytsearch5:{query}", download=False)
+            info = ydl.extract_info(f"scsearch5:{query}", download=False)
             entries = [e for e in info['entries'] if e is not None]
             context.user_data['search_results'] = entries
 
@@ -260,9 +265,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         index = int(action.split("_")[2])
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
-            # Берем название и качаем сразу по нему
             search_query = entries[index].get('title')
-            url = f"ytsearch1:{search_query}" # <--- МАГИЯ ЗДЕСЬ
+            url = f"scsearch1:{search_query}" # Ищем и качаем из SoundCloud
         is_audio = True
     elif action == "download_audio":
         url = context.user_data.get('current_url')
@@ -306,7 +310,6 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            # Если url начинается на ytsearch, yt-dlp сам найдет первое видео
             info = ydl.extract_info(url, download=True)
             if 'entries' in info: info = info['entries'][0]
 
