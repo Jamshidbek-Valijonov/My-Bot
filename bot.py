@@ -161,7 +161,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
-    # НАСТРОЙКИ ДЛЯ ОБХОДА (если это YouTube, они не помешают)
+    # Настройки для YouTube (если вдруг прямая ссылка)
     extractor_opts = {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
 
     if url_match:
@@ -171,7 +171,6 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ydl_opts = {
             'quiet': True, 
             'extract_flat': True, 
-            # Куки для YouTube больше не нужны для SoundCloud, но оставим на случай прямых ссылок
             'cookiefile': os.path.abspath('youtube_cookies.txt'), 
             'extractor_args': extractor_opts
         }
@@ -209,13 +208,13 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
-    # Используем scsearch5 для поиска в SoundCloud
+    # Ищем в SoundCloud и указываем форматы, чтобы избежать ошибки 'float'
     ydl_opts = {
         'format': 'bestaudio/best', 
         'quiet': True, 
         'extract_flat': True, 
         'noplaylist': True,
-        'extractor_args': extractor_opts
+        'extractor_args': {'soundcloud': {'formats': ['http_mp3', 'hls_mp3']}} # ФИКС ОШИБКИ
     }
 
     try:
@@ -266,7 +265,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
             search_query = entries[index].get('title')
-            url = f"scsearch1:{search_query}" # Ищем и качаем из SoundCloud
+            url = f"scsearch1:{search_query}"
         is_audio = True
     elif action == "download_audio":
         url = context.user_data.get('current_url')
@@ -290,7 +289,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'retries': 10,
         'fragment_retries': 10,
         'socket_timeout': 30,
-        'extractor_args': {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
+        # ОБЪЕДИНЯЕМ НАСТРОЙКИ ДЛЯ YOUTUBE И SOUNDCLOUD
+        'extractor_args': {
+            'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']},
+            'soundcloud': {'formats': ['http_mp3', 'hls_mp3']} 
+        }
     }
 
     if is_audio:
