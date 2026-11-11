@@ -159,7 +159,8 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
-    extractor_opts = {'youtube': {'player_client': ['tv', 'web_safari', 'android']}}
+    # ИЗМЕНЕНО ЗДЕСЬ (1)
+    extractor_opts = {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
 
     if url_match:
         url = url_match.group(1)
@@ -168,7 +169,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ydl_opts = {
             'quiet': True, 
             'extract_flat': True, 
-            'cookiefile': os.path.abspath('youtube_cookies.txt'), # АБСОЛЮТНЫЙ ПУТЬ
+            'cookiefile': os.path.abspath('youtube_cookies.txt'), 
             'extractor_args': extractor_opts
         }
         
@@ -280,12 +281,13 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
         'ffmpeg_location': '/usr/bin/ffmpeg',
         'noplaylist': True,
-        'cookiefile': os.path.abspath('youtube_cookies.txt'), # АБСОЛЮТНЫЙ ПУТЬ
+        'cookiefile': os.path.abspath('youtube_cookies.txt'), 
         'merge_output_format': 'mp4',
         'retries': 10,
         'fragment_retries': 10,
         'socket_timeout': 30,
-        'extractor_args': {'youtube': {'player_client': ['tv', 'web_safari', 'android']}}
+        # ИЗМЕНЕНО ЗДЕСЬ (3)
+        'extractor_args': {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
     }
 
     if is_audio:
