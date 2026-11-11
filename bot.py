@@ -16,7 +16,7 @@ TEXTS = {
     "uz": {
         "welcome": (
             "🔥 <b>Assalomu alaykum, jigarim!</b> 👋\n\n"
-            "Men sizga turli platformalardan media yuklab olishda yordam beruvchi botman.\n\n"
+            "Men sizga SoundCloud'dan musiqa yuklab olishda yordam beruvchi botman.\n\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🎵 <b>MUSIQA TOPISH</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
@@ -25,8 +25,7 @@ TEXTS = {
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🚀 <b>QANDAY ISHLATILADI?</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "🔗 Havolani yuboring (Audio yuklash uchun).\n"
-            "🔍 Yoki qo'shiq nomini yozing (Qidirish uchun)."
+            "🔍 Shunchaki qo'shiq nomini yozing (Qidirish uchun)."
         ),
         "choose_lang": "🌐 Iltimos, tilni tanlang:",
         "searching": "🔍 Qidirilmoqda...",
@@ -43,7 +42,7 @@ TEXTS = {
     "ru": {
         "welcome": (
             "🔥 <b>Привет, бро!</b> 👋\n\n"
-            "Я бот, который поможет скачать музыку с YouTube и SoundCloud.\n\n"
+            "Я бот, который поможет скачать музыку с SoundCloud.\n\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🎵 <b>ПОИСК МУЗЫКИ</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
@@ -52,8 +51,7 @@ TEXTS = {
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🚀 <b>КАК ЭТО РАБОТАЕТ?</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "🔗 Отправь ссылку (чтобы скачать аудио).\n"
-            "🔍 Или напиши название песни (для поиска)."
+            "🔍 Просто напиши название песни (для поиска)."
         ),
         "choose_lang": "🌐 Пожалуйста, выберите язык:",
         "searching": "🔍 Ищу...",
@@ -70,7 +68,7 @@ TEXTS = {
     "en": {
         "welcome": (
             "🔥 <b>Hello, bro!</b> 👋\n\n"
-            "I am a bot that helps you download music from YouTube and SoundCloud.\n\n"
+            "I am a bot that helps you download music from SoundCloud.\n\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🎵 <b>MUSIC SEARCH</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
@@ -79,8 +77,7 @@ TEXTS = {
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
             "🚀 <b>HOW TO USE?</b>\n"
             "⸻⸻⸻⸻⸻⸻⸻⸻⸻\n"
-            "🔗 Send a link (to download audio).\n"
-            "🔍 Or type a song name (to search)."
+            "🔍 Just type a song name (to search)."
         ),
         "choose_lang": "🌐 Please choose a language:",
         "searching": "🔍 Searching...",
@@ -132,6 +129,7 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text = update.message.text or update.message.caption or ""
     url_match = re.search(r'(https?://[^\s]+)', message_text)
     
+    # Настройки для YouTube (на случай прямых ссылок)
     extractor_opts = {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}}
 
     if url_match:
@@ -169,21 +167,22 @@ async def search_or_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await status_msg.edit_text(f"{get_text(context, 'error')}{str(e)}")
         return
 
-    # СЦЕНАРИЙ 2: Поиск (Ищем в YouTube, если не выйдет - в SoundCloud)
+    # СЦЕНАРИЙ 2: Поиск в SoundCloud
     query = message_text
     status_msg = await update.message.reply_text(get_text(context, "searching"))
 
+    # Ищем в SoundCloud, указываем форматы, чтобы не было ошибки float
     ydl_opts = {
         'format': 'bestaudio/best', 
         'quiet': True, 
         'extract_flat': True, 
         'noplaylist': True,
-        'extractor_args': extractor_opts
+        'extractor_args': {'soundcloud': {'formats': ['http_mp3', 'hls_mp3']}}
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(f"ytsearch5:{query}", download=False) # Ищем в YouTube
+            info = ydl.extract_info(f"scsearch5:{query}", download=False)
             entries = [e for e in info['entries'] if e is not None]
             context.user_data['search_results'] = entries
 
@@ -228,9 +227,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         index = int(action.split("_")[2])
         entries = context.user_data.get('search_results', [])
         if index < len(entries):
-            video_id = entries[index].get('id')
-            if video_id:
-                url = f"https://www.youtube.com/watch?v={video_id}"
+            # Берем название и ищем в SoundCloud для скачивания
+            search_query = entries[index].get('title')
+            url = f"scsearch1:{search_query}"
         is_audio = True
     elif action == "download_audio":
         url = context.user_data.get('current_url')
@@ -250,9 +249,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'retries': 10,
         'fragment_retries': 10,
         'socket_timeout': 30,
-        # Убрали formats для SoundCloud, чтобы не было ошибки float
+        # Убираем formats для SoundCloud, чтобы не было ошибки float
         'extractor_args': {'youtube': {'player_client': ['web_embedded', 'tv', 'web_safari']}},
-        'format': 'bestaudio/best', # Принудительно качаем только аудио
+        'format': 'bestaudio/best',
     }
 
     if is_audio:
